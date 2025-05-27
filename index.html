@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evalúa tu Comida - Anónimo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Verde principal */
+            --secondary-color: #FFC107; /* Amarillo para estrellas */
+            --text-color: #333;
+            --bg-color: #f0f4f8; /* Fondo suave */
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --button-hover: #45a049;
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .kiosk-container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-light);
+            width: 100%;
+            max-width: 650px; /* Un poco más ancho para el diseño de kiosco */
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 2.5em; /* Más grande para kiosco */
+            font-weight: 700;
+        }
+
+        .instruction {
+            color: var(--text-color);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .form-section label {
+            display: block;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 1.4em; /* Etiquetas de sección más grandes */
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Mayor espacio entre estrellas */
+            direction: rtl; /* Para que las estrellas se llenen de izquierda a derecha */
+        }
+
+        .rating-stars input[type="radio"] {
+            display: none;
+        }
+
+        .rating-stars label {
+            cursor: pointer;
+            font-size: 3.5em; /* Estrellas muy grandes y fáciles de tocar */
+            color: #ccc;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1; /* Eliminar espacio extra */
+        }
+
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label,
+        .rating-stars input[type="radio"]:checked ~ label {
+            color: var(--secondary-color); /* Color de estrella activa */
+            transform: scale(1.1); /* Efecto de "gamificación" al seleccionar */
+        }
+
+        .rating-stars input[type="radio"]:checked + label {
+            animation: bounce 0.3s ease-out; /* Pequeña animación al seleccionar */
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1.1); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-size: 1.2em; /* Etiquetas individuales un poco más pequeñas pero claras */
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        textarea, select {
+            width: 100%;
+            padding: 15px; /* Más padding para facilitar la interacción */
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1.1em; /* Fuente más grande en campos */
+            color: var(--text-color);
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        select {
+            appearance: none; /* Eliminar estilo nativo del select */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23333333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px; /* Espacio para el icono */
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 18px 30px; /* Botón grande y fácil de ver */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.5em; /* Fuente grande en el botón */
+            font-weight: 700;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: var(--shadow-light);
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px); /* Efecto de levantamiento */
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .confirmation-message {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f5e9; /* Verde claro para confirmación */
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.3em;
+            display: none; /* Oculto por defecto */
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pequeños ajustes para pantallas muy pequeñas */
+        @media (max-width: 600px) {
+            .kiosk-container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .form-section label {
+                font-size: 1.2em;
+            }
+            .rating-stars label {
+                font-size: 3em;
+            }
+            button {
+                font-size: 1.3em;
+                padding: 15px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="kiosk-container">
+        <h1>¡Hola! Evalúa tu Comida</h1>
+        <p class="instruction">Tu opinión es muy valiosa para nosotros. ¡Ayúdanos a mejorar!</p>
+
+        <form id="evaluationForm">
+            <div class="form-section">
+                <label>¿Qué tal la Calidad en general?</label>
+                <div class="rating-stars">
+                    <input type="radio" id="quality5" name="quality" value="5"><label for="quality5">★</label>
+                    <input type="radio" id="quality4" name="quality" value="4"><label for="quality4">★</label>
+                    <input type="radio" id="quality3" name="quality" value="3"><label for="quality3">★</label>
+                    <input type="radio" id="quality2" name="quality" value="2"><label for="quality2">★</label>
+                    <input type="radio" id="quality1" name="quality" value="1"><label for="quality1">★</label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label>¿Cómo estuvo el Sabor?</label>
+                <div class="rating-stars">
+                    <input type="radio" id="taste5" name="taste" value="5"><label for="taste5">★</label>
+                    <input type="radio" id="taste4" name="taste" value="4"><label for="taste4">★</label>
+                    <input type="radio" id="taste3" name="taste" value="3"><label for="taste3">★</label>
+                    <input type="radio" id="taste2" name="taste" value="2"><label for="taste2">★</label>
+                    <input type="radio" id="taste1" name="taste" value="1"><label for="taste1">★</label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label>¿Qué tan Fresca te pareció?</label>
+                <div class="rating-stars">
+                    <input type="radio" id="freshness5" name="freshness" value="5"><label for="freshness5">★</label>
+                    <input type="radio" id="freshness4" name="freshness" value="4"><label for="freshness4">★</label>
+                    <input type="radio" id="freshness3" name="freshness" value="3"><label for="freshness3">★</label>
+                    <input type="radio" id="freshness2" name="freshness" value="2"><label for="freshness2">★</label>
+                    <input type="radio" id="freshness1" name="freshness" value="1"><label for="freshness1">★</label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label>¿Y la Presentación del plato?</label>
+                <div class="rating-stars">
+                    <input type="radio" id="presentation5" name="presentation" value="5"><label for="presentation5">★</label>
+                    <input type="radio" id="presentation4" name="presentation" value="4"><label for="presentation4">★</label>
+                    <input type="radio" id="presentation3" name="presentation" value="3"><label for="presentation3">★</label>
+                    <input type="radio" id="presentation2" name="presentation" value="2"><label for="presentation2">★</label>
+                    <input type="radio" id="presentation1" name="presentation" value="1"><label for="presentation1">★</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">¿Tienes algún comentario rápido?</label>
+                <select id="comments" name="comments">
+                    <option value="">Selecciona una opción o déjalo en blanco</option>
+                    <option value="demasiado_salado">Demasiado salado</option>
+                    <option value="falta_variedad">Falta variedad</option>
+                    <option value="porciones_pequenas">Porciones un poco pequeñas</option>
+                    <option value="temperatura_incorrecta">La temperatura no era la ideal</option>
+                    <option value="demasiado_picante">Demasiado picante</option>
+                    <option value="sabor_suave">Sabor muy suave, falta carácter</option>
+                    <option value="mala_textura">Mala textura</option>
+                    <option value="presentacion_descuidada">Presentación descuidada</option>
+                    <option value="otros">Otros (especifica abajo)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="otherComment">¿Algo más que quieras añadir?</label>
+                <textarea id="otherComment" name="otherComment" rows="4" placeholder="Escribe aquí si tienes un comentario adicional..."></textarea>
+            </div>
+
+            <button type="submit">¡Enviar Evaluación!</button>
+            <div class="confirmation-message" id="confirmationMessage">
+                ¡Gracias por tu evaluación! Tu opinión nos ayuda a mejorar.
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('evaluationForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de forma tradicional (recargar la página)
+
+            // Simulación de envío de datos
+            const data = {
+                quality: document.querySelector('input[name="quality"]:checked')?.value || 'N/A',
+                taste: document.querySelector('input[name="taste"]:checked')?.value || 'N/A',
+                freshness: document.querySelector('input[name="freshness"]:checked')?.value || 'N/A',
+                presentation: document.querySelector('input[name="presentation"]:checked')?.value || 'N/A',
+                specificComment: document.getElementById('comments').value || 'N/A',
+                otherComment: document.getElementById('otherComment').value || 'N/A'
+            };
+
+            console.log('Evaluación enviada (simulada):', data);
+
+            // Muestra el mensaje de confirmación
+            const confirmationMsg = document.getElementById('confirmationMessage');
+            confirmationMsg.style.display = 'block';
+
+            // Opcional: Deshabilita el formulario para evitar múltiples envíos
+            const formElements = this.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                formElements[i].disabled = true;
+            }
+
+            // Después de un tiempo, oculta el mensaje y reinicia el formulario
+            setTimeout(() => {
+                confirmationMsg.style.display = 'none';
+                this.reset(); // Reinicia todos los campos del formulario
+                // Vuelve a habilitar el formulario
+                for (let i = 0; i < formElements.length; i++) {
+                    formElements[i].disabled = false;
+                }
+            }, 4000); // El mensaje se muestra por 4 segundos
+        });
+
+        // Asegurarse de que las estrellas se llenen correctamente al cargar la página
+        document.querySelectorAll('.rating-stars').forEach(group => {
+            const inputs = group.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    // This is handled by CSS using :checked ~ label selector, no JS needed for visual fill
+                });
+            });
+        });
+    </script>
+</body>
+</html>
